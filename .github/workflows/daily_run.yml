@@ -9,6 +9,11 @@ on:
   
   # ปุ่มกดรันเอง (เผื่อใจร้อนอยากเทส)
   workflow_dispatch:
+    inputs:
+      stock_symbol:
+        description: 'หุ้นที่จะเช็ค (เช่น AAPL)'
+        required: false
+        default: 'AMZN'
 
 jobs:
   build:
