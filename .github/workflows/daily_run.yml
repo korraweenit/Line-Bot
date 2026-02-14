@@ -1,0 +1,36 @@
+name: Daily Stock Alert 📢
+
+on:
+  schedule:
+    # ตั้งเวลาปลุก (เป็นเวลา UTC)
+    # 00:00 UTC = 07:00 เช้าเมืองไทย
+    # ถ้าอยากได้ 8 โมงเช้าไทย = 01:00 UTC
+    - cron: '0 5 * * *' 
+  
+  # ปุ่มกดรันเอง (เผื่อใจร้อนอยากเทส)
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+
+    - name: Install libraries
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Bot Script
+      env: 
+        # ดึงกุญแจจากตู้เซฟมาใช้
+        LINE_ACCESS_TOKEN: ${{ secrets.LINE_ACCESS_TOKEN }}
+        MY_USER_ID: ${{ secrets.MY_USER_ID }}
+      run: |
+        python bot_on_cloud.py
