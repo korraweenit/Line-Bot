@@ -13,7 +13,7 @@ GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
 # --- ตั้งค่า Gemini AI ---
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash') # ใช้รุ่น Flash เพราะเร็วและเพียงพอสำหรับงานสรุป
+model = genai.GenerativeModel('gemini-2.5-flash') # ใช้รุ่น Flash เพราะเร็วและเพียงพอสำหรับงานสรุป
 
 def get_ai_news():
     prompt = """
