@@ -42,14 +42,21 @@ def send_line_message(msg):
 
 def check_market_and_news():
     # เพิ่ม VOO และ QQQ เข้ามาในพอร์ต
-    symbols = ['BTC-USD', 'MSFT', 'GOOGL', 'VOO', 'FXI','VXUS']
+    symbols = [ 'MSFT', 'GOOGL', 'VOO', 'FXI','VXUS']
     
     tz = pytz.timezone('Asia/Bangkok')
     now = datetime.now(tz)
     
-    msg = f"พักเที่ยงแล้วครับหมอ! 📊 อัปเดตตลาด ({now.strftime('%H:%M')})\n"
+    msg = f"โย่ววววววว Bew! 📊 อัปเดตตลาด ({now.strftime('%H:%M')})\n"
     msg += "-" * 20 + "\n"
     
+    try:
+        res = requests.get("https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT")
+        btc_price = float(res.json()["price"])
+        msg += f"📈 BTC-USD: ${btc_price:,.2f}\n"
+    except Exception as e:
+        msg += f"❌ BTC-USD: Error ({e})\n"
+
     for sym in symbols:
         try:
             ticker = yf.Ticker(sym)
