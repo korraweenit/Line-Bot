@@ -3,13 +3,31 @@ import requests
 import json
 import yfinance as yf
 from datetime import datetime
-import pytz # ใช้แปลงเวลาเป็นไทย
+import pytz
+import google.generativeai as genai
 
-# --- 🔒 ดึงกุญแจจากตู้เซฟของ GitHub (ไม่ต้องกรอกเองแล้ว) ---
+# --- 🔒 ดึงกุญแจจากตู้เซฟ ---
 LINE_ACCESS_TOKEN = os.environ["LINE_ACCESS_TOKEN"]
 MY_USER_ID = os.environ["MY_USER_ID"]
+GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 
-# --- ฟังก์ชันส่งไลน์ ---
+# --- ตั้งค่า Gemini AI ---
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel('gemini-1.5-flash') # ใช้รุ่น Flash เพราะเร็วและเพียงพอสำหรับงานสรุป
+
+def get_ai_news():
+    prompt = """
+    สรุปข่าวเด่นรายวันด้าน Crypto และเศรษฐกิจมหภาค (Macroeconomics) สั้นๆ กระชับ
+    เน้นประเด็นสำคัญที่มีผลต่อตลาด (เช่น ข่าวระดับโลก, นโยบายภาษี/ดอกเบี้ย, หรือ Sentiment นักลงทุน)
+    และวิเคราะห์ปัจจัยเร่ง (Catalysts) สั้นๆ
+    ความยาวไม่เกิน 5-7 บรรทัด เขียนให้อ่านง่ายเหมาะกับอ่านผ่านแอป LINE
+    """
+    try:
+        response = model.generate_content(prompt)
+        return response.text.strip()
+    except Exception as e:
+        return f"❌ AI ไม่สามารถสรุปข่าวได้: {str(e)}"
+
 def send_line_message(msg):
     url = 'https://api.line.me/v2/bot/message/push'
     headers = {
@@ -22,16 +40,14 @@ def send_line_message(msg):
     }
     requests.post(url, headers=headers, data=json.dumps(data))
 
-# --- ฟังก์ชันเช็คหุ้น ---
-def check_market():
-    symbols = ['BTC-USD', 'TSLA', 'GOOGL']
+def check_market_and_news():
+    # เพิ่ม VOO และ QQQ เข้ามาในพอร์ต
+    symbols = ['BTC-USD', 'MSFT', 'GOOGL', 'VOO', 'FXI','VXUS']
     
-    # ตั้งเวลาไทย
     tz = pytz.timezone('Asia/Bangkok')
     now = datetime.now(tz)
     
-    msg = f"🌅 อรุณสวัสดิ์ครับหมอ! ({now.strftime('%H:%M')})\n"
-    msg += "สรุปตลาดเช้านี้:\n"
+    msg = f"พักเที่ยงแล้วครับหมอ! 📊 อัปเดตตลาด ({now.strftime('%H:%M')})\n"
     msg += "-" * 20 + "\n"
     
     for sym in symbols:
@@ -42,12 +58,14 @@ def check_market():
         except:
             msg += f"❌ {sym}: Error\n"
             
-    msg += "-" * 20
+    msg += "-" * 20 + "\n"
+    msg += "📰 🤖 AI Macro & Crypto News:\n"
+    msg += get_ai_news()
+    
     return msg
 
-# --- รันเลย ---
 if __name__ == "__main__":
     print("Bot starting...")
-    report = check_market()
+    report = check_market_and_news()
     send_line_message(report)
     print("Done!")

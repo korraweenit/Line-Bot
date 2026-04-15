@@ -32,5 +32,6 @@ jobs:
         # ดึงกุญแจจากตู้เซฟมาใช้
         LINE_ACCESS_TOKEN: ${{ secrets.LINE_ACCESS_TOKEN }}
         MY_USER_ID: ${{ secrets.MY_USER_ID }}
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
       run: |
         python bot_on_cloud.py

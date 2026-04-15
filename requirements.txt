@@ -1,3 +1,4 @@
-requests
 yfinance
+requests
 pytz
+google-generativeai
