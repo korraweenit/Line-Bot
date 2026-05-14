@@ -59,7 +59,7 @@ if __name__ == "__main__":
         send_line_message(report)
     elif 14 <= hour <= 16:
         # ช่วงบ่ายสาม: ส่ง Reminder ฝึกภาษา
-        study_msg = "🔔 คุณหมอบิวครับ! อย่าลืมทำ\n- Listen & Repeat\n- Shadowing\n- Listen Academic\n\nลงทุนในตัวเองคือ High-Yield ที่สุดครับ! ✌️"
+        study_msg = "🔔  อย่าลืมทำ\n- Listen & Repeat\n- Shadowing\n- Listen Academic\n\n ✌️"
         send_line_message(study_msg)
     else:
         # กรณีรันมือ (Manual) นอกช่วงเวลา
